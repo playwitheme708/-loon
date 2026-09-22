@@ -1,1 +1,18 @@
+#!name = Soul-阅后即焚+派对频道(本地脚本版)
+#!desc = 本地JS｜仅阅后即焚，派对频道列表正常加载，无其他功能
+#!author = 树先生修改
+#!date = 2026-09-22
+
+[Argument]
+picRead = switch,true,tag=阅后即焚,desc=开启/关闭功能
+
+[Rewrite]
+# 全部接口放行，派对频道、横幅等不拦截
+
+[Script]
+# 阅后即焚，调用本地脚本 soul-snapchat.js
+http-response ^https:\/\/api-chat\.soulapp\.cn\/snapchat\/url script-path = soul-snapchat.js, requires-body=true, tag=私聊阅后即焚, enable={picRead}
+
+[MitM]
+hostname = api-chat.soulapp.cn
 
