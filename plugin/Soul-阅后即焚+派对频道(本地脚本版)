@@ -1,8 +1,8 @@
 #!name = Soul
 #!author = 树先生, 怎么肥事, 奶思
-#!desc = 移除广告
+#!desc = 移除广告（保留派对URL Scheme跳转）
 #!icon = https://github.com/ishowshu/loon/raw/refs/heads/main/icon/soul.png
-#!date = 2026-09-19
+#!date = 2026-09-23
 [Rule]
 # 分流走直连，避免影响功能使用
 ip-cidr, 13.127.149.196/32, DIRECT
@@ -48,19 +48,11 @@ domain, ssp.maplehaze.cn, REJECT
 # 私聊快捷菜单
 ^https:\/\/api-chat\.soulapp\.cn\/chat\/quick\/menu url reject
 # 私聊用户匹配推荐
-^https:\/\/api-chat\.soulapp\.cn\/chat\/session\/quickButtonCheck url reject-dict
+^https:\/\/api-chat\.soulapp\.cn\/chatList\/limitAvatar\/entrance url reject-dict
 # 派对体验反馈
 ^https:\/\/chat-live\.soulapp\.cn\/live\/config\/rec-feedback url reject-dict
 # 广场关注tab用户派对推荐
 ^https:\/\/post\.soulapp\.cn\/post\/relationUser\/chatRooms url reject-dict
-# 聊天页通讯录tab邀请好友回归横幅
-^https:\/\/increase-openapi\.soulapp\.cn\/increase\/dusting\/getAddressBookDustings url reject-dict
-# 派对的关注tab隐藏猜我喜欢的派对
-^https:\/\/chat-live\.soulapp\.cn\/live\/queryRelevantList url reject-dict
-# 主页ai描述推荐
-^https:\/\/api-user\.soulapp\.cn\/user\/desc\/getUserPersonalDesc url reject-dict
-# 我的页面瞬间得分向导
-^https:\/\/post\.soulapp\.cn\/v1\/post\/homepage\/ai\/assistant\/guide url reject-dict
 # 聊天列表页面顶部头像推荐横幅
 ^https:\/\/api-chat\.soulapp\.cn\/chatList\/limitAvatar\/entrance url reject-dict
 # 聊天列表页面顶部用户推荐
@@ -69,21 +61,20 @@ domain, ssp.maplehaze.cn, REJECT
 ^https:\/\/activity\.soulapp\.cn\/commercial\/room\/resources reject-dict
 ^https:\/\/chat-live\.soulapp\.cn\/official\/scene\/module reject-dict
 # 星球页面派对的游戏栏
-^https:\/\/chat-live\.soulapp\.cn\/live\/planet\/match\/game\/configList reject-dict
+#^https:\/\/chat-live\.soulapp\.cn\/live\/planet\/match\/game\/configList reject-dict
 # 派对的创建按钮广告提示
-^https:\/\/chat-live\.soulapp\.cn\/square\/getSkinConfig reject-dict
-# 派对页面的关注tab中我的关注推荐
-^https:\/\/chat-live\.soulapp\.cn\/live\/queryFollowRoomList response-body-json-jq '.data.recUserFeedList = []'
-# 派对页面的关注tab中猜你喜欢
-^https:\/\/chat-live\.soulapp\.cn\/square\/relation\/guideUserList response-body-json-jq '.data.userDTOList = []'
+#^https:\/\/chat-live\.soulapp\.cn\/square\/getSkinConfig reject-dict
+# ======【重点：下面两行注释！这两条会破坏派对列表加载，导致url scheme跳转失败】======
+#^https:\/\/chat-live\.soulapp\.cn\/live\/queryFollowRoomList response-body-json-jq '.data.recUserFeedList = []'
+#^https:\/\/chat-live\.soulapp\.cn\/square\/relation\/guideUserList response-body-json-jq '.data.userDTOList = []'
 # 星球页面
 ^https:\/\/api-user\.soulapp\.cn\/v6\/planet\/config response-body-json-jq '.data.showRedMind = false | .data.showLuckyBag = false | .data.coreCards |= map(select(.type != 27))'
-# 派对列表中间横幅官方广告
-^https:\/\/chat-live\.soulapp\.cn\/chatroom\/chatClassifyRoomList response-body-json-jq '.data.positionContentRespList = []'
 # 我的页面tab
 ^https:\/\/post\.soulapp\.cn\/homepage\/tabs\/v2 response-body-json-jq '.data.selectedTagPool = {} | .data.headTabDTOList |= map(select(.tabCode != "STAR_TRAILS"))'
 # 派对频道列表
-^https:\/\/chat-live\.soulapp\.cn\/chatroom\/getRoomTagInfo response-body-json-jq '.data.res |= map(.iconConfig = null)'
+#^https:\/\/chat-live\.soulapp\.cn\/chatroom\/getRoomTagInfo response-body-json-jq '.data.res |= map(.iconConfig = null)'
+# 派对列表中间横幅官方广告
+#^https:\/\/chat-live\.soulapp\.cn\/chatroom\/chatClassifyRoomList response-body-json-jq '.data.positionContentRespList = []'
 [Script]
 # 私聊限制
 http-response ^https:\/\/api-chat\.soulapp\.cn\/chat\/limitInfo script-path = https://github.com/ishowshu/qx/raw/refs/heads/main/script/soul_qx.js, requires-body=true, tag=解锁私聊
